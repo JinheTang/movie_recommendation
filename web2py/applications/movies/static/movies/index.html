@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Movie Recommendation Engine</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="./vendor/custom.css">
+
+
+</head>
+
+<body>
+  
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bgdark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">电影推荐系统</a>
+      
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div id="app">
+
+  <div class="container" style="max-width: 1200px;">
+
+    <div class="row">
+      <div class="col-lg-12 text-center">
+          
+      <div style="min-width: 310px; margin: 20px auto">
+      
+        <input  v-model="search" type="text" class="form-control" placeholder="请输入电影名（英文）..." style="border-radius:0.25em; font-size: 24px;">
+
+        <div> 
+
+          <div  v-for="item in searchResults" style="border:1px solid #ced4da; padding: 10px;">
+            <table width="100%;">
+              <tr>
+                <td>
+                   <h4 style="text-align: left; color: black;">{{item["title"]}}</h4> 
+                </td>
+                <td style="text-align: right;">
+                  <!-- <span v-on:click="addrating(item,1)" class="rating-circle">1</span>
+                  <span v-on:click="addrating(item,2)" class="rating-circle">2</span>
+                  <span v-on:click="addrating(item,3)" class="rating-circle">3</span>
+                  <span v-on:click="addrating(item,4)" class="rating-circle">4</span>
+                  <span v-on:click="addrating(item,5)" class="rating-circle">5</span> -->
+
+                  <star-rating  :show-rating="false" @rating-selected="addrating($event,item)"></star-rating>
+                  
+                </td>
+              </tr>
+            </table>
+
+          </div>
+
+        
+
+
+        </div> 
+
+      </div>
+
+    
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+
+        <button v-for="movie in ratings" class="badge badge-light" style="font-size: inherit;">
+       <span v-on:click="removemovie(movie)" class="btn btn-danger btn-circle">x</span> {{movie.title}} | {{movie.rating}} 
+      </button>
+        
+         
+    </div>
+  </div>
+
+  <div class="container"  style="max-width: 1200px; margin-top:20px;">
+    <div class="row">
+     
+     <h2 v-if="recommendations.length > 0"> 为你推荐 </h2>
+      
+      <div class="col-lg-12">
+
+        <div class="row">
+           
+        <div v-for="movie in recommendations" class="movie-card col-md-2">
+           
+           <img v-if="movie['poster']=='True'" :src="'posters/'+movie['movieId']+'.jpg'">
+           
+           <div class="movie-no-image" v-else>
+              <div style="margin-top: auto; text-align: center;">
+              {{movie['title']}}
+             </div>
+
+            </div>
+            <div style="position: absolute; bottom: 0; background: #8080806e; width: 185px;">
+            <star-rating :star-size="30"  :show-rating="false" @rating-selected="addrating($event,movie)"></star-rating>
+           </div>
+        </div>
+        
+        </div>
+
+       
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  </div> <!-- App -->
+</div>
+
+  <!-- Bootstrap core JavaScript -->
+  <!-- <script src="vendor/jquery/jquery.slim.min.js"></script> -->
+  <script src="./vendor/jquery.min.js"></script>
+  <script src="./vendor/vue.js"></script>
+  <script src="./vendor/vue-ratings.js"></script>
+
+
+  <script src="./vendor/axios.min.js"></script>
+  <script src="./vendor/loadash.js"></script>
+
+  <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+  <script type="text/javascript">
+
+  
+
+  </script>
+
+  <script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      data: {
+        all_movies:[],
+        search:"",
+        ratings:{},
+        recommendations:[]
+
+      },
+      components:{
+        StarRating: VueStarRating.default
+      },
+      created: function(){
+
+            console.log("here")
+            var self=this;
+            
+            $.getJSON('movies.json', function (data) {
+
+              self.all_movies = data
+              
+            });
+        },
+        methods:{
+             
+          addrating: function(rating,item){
+            id = item["movieId"]
+            item["rating"] = rating
+            Vue.set(this.ratings,id,item)
+            this.search = ""
+            this.getrecommendations()
+
+          },
+          removemovie: function(movie){
+
+            id = movie["movieId"]
+            console.log(this.ratings[id])
+            Vue.delete(this.ratings,id)
+            this.getrecommendations()
+
+
+
+          },
+
+          getrecommendations: function(){
+            ratings = this.ratings
+            var self = this;
+            self.recommendations = [];
+            axios.post('/movies/default/call/json/get_recommendations', {
+                    watched_movies:ratings
+                  })
+                  .then(function(response){
+
+                    recommendation = response.data
+
+                     console.log(recommendation)
+
+                    _.forEach(recommendation,function(movie_title){
+
+                    movie = _.filter(this.all_movies, {'title':movie_title})[0]
+
+                      self.recommendations.push(movie)
+
+
+                    });
+
+                  
+                  })
+                  .catch(function(e) {
+                    console.log("Error:",e)
+                  });
+
+
+
+
+          }
+
+
+        },
+      computed:{
+              searchResults(){
+
+                if(this.search.length < 2){
+                  return []
+                }
+                all_movies = (this.all_movies || [])
+                self = this;
+
+                result = all_movies.filter(item => {
+                    movie_name = item["title"]
+                    pos = movie_name.toString().toLowerCase().indexOf(self.search.toLowerCase())
+                    if (pos > -1){
+                        return -1
+                     }else{
+                      return 0;
+                     }
+
+                     });    
+
+               if(result.length > 100){
+                
+                result = result.slice(0,100)
+               
+               } 
+
+
+               return result
+
+               }
+      }    
+    
+
+    });         
+
+  </script>
+
+</body>
+
+</html>

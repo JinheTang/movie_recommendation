@@ -1,0 +1,12 @@
+[
+  {
+    "movieId": 1,
+    "title": "Toy Story (1995)",
+    "genres": "Adventure|Animation|Children|Comedy|Fantasy"
+  },
+  {
+    "movieId": 2,
+    "title": "Jumanji (1995)",
+    "genres": "Adventure|Children|Fantasy"
+  }
+]

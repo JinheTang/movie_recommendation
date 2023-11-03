@@ -1,0 +1,57 @@
+body{
+  font-weight: normal;
+  font-style: normal;
+  font-family: 'Avenir',Helvetica,Arial,sans-serif;
+  background-color: #ececec!important;
+  color: black;
+
+}
+
+.bgdark {
+    background-color: #262626!important;
+    border-bottom: #464141;
+    border-style: solid;
+    border-width: 0px 0px 2px 0px;
+}
+.btn-circle {
+    width: 20px;
+    height: 20px;
+    padding: 0px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+.rating-circle{
+	font-size: 20px;
+    border-radius: 10%;
+    border: 2px solid black;
+    color:black;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    margin: 2px;
+    padding: 5px;
+}
+
+.rating-pill{
+	margin: 0.5rem;
+	background-color: #262626!important;
+	color: white;
+	padding: 0.5rem;
+	border-radius:2%;
+}
+
+.movie-card{
+	margin:0.2rem;
+
+}
+.movie-no-image{
+	border: 2px solid black;
+	border-radius: 10px;
+	width: 185px;
+	height: 278px;
+	padding: 10px;
+	font-size: 1.5rem;
+	overflow-wrap: break-word;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Recommendation Tester</title>
+</head>
+<body>
+<div id="recommendations"> </div>
+
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>	
+
+<script type="text/javascript">
+	var watched_movies = {
+		"1307":{
+			"movieId":1307,
+			"title":"When Harry Met Sally... (1989)",
+			"genres":"Comedy|Romance",
+			"poster":"True",
+			"rating":5
+		}
+	};
+	
+		axios.post('/movies/default/call/json/get_recommendations', {
+			watched_movies:watched_movies
+		}).then(function(response){
+
+			console.log(response)
+			$("#recommendations").html(response.data)
+
+		}).catch(function(e) {
+			console.log("Error:",e)
+		});
+
+
+</script>
+</body>
+</html>
